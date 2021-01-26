@@ -1,5 +1,3 @@
-import copy
-
 class Actor():
     def __init__(self, start, limits, barriers):
         self.coords = start
@@ -7,7 +5,7 @@ class Actor():
         self.barriers = barriers
     
     def canmove(self, direction):
-        moving = copy.deepcopy(self.coords)
+        moving = self.coords
         if(direction == 'up'):
             moving[1] -= 1
         elif(direction == 'right'):
@@ -25,13 +23,14 @@ class Actor():
     def move(self, direction):
         if(direction == 'up'):
             if self.canmove('up'):
-                self.coords[1] -= 0.5
+                self.coords[1] -= 1
+
         elif(direction == 'right'):
             if self.canmove('right'):
-                self.coords[0] += 2
+                self.coords[0] += 1
         elif(direction == 'down'):
             if self.canmove('down'):
-                self.coords[1] += 2
+                self.coords[1] += 1
         elif(direction == 'left'):
             if self.canmove('left'):
-                self.coords[0] -= 2
+                self.coords[0] -= 1

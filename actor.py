@@ -1,9 +1,8 @@
-class actor():
+class Actor():
     def __init__(self, start, limits, barriers):
         self.coords = start
         self.limits = limits
         self.barriers = barriers
-        done = False
     
     def canmove(self, direction):
         moving = self.coords
@@ -24,14 +23,14 @@ class actor():
     def move(self, direction):
         if(direction == 'up'):
             if self.canmove('up'):
-                self.coords[1] += 1
+                self.coords[1] -= 1
 
         elif(direction == 'right'):
             if self.canmove('right'):
                 self.coords[0] += 1
         elif(direction == 'down'):
             if self.canmove('down'):
-                self.coords[1] -= 1
+                self.coords[1] += 1
         elif(direction == 'left'):
             if self.canmove('left'):
                 self.coords[0] -= 1

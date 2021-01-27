@@ -6,6 +6,8 @@ class Actor():
         self.limits = limits
         self.barriers = barriers
     
+    # returns True if all validations are False
+    # TODO: Test if collisions are working as expected
     def canmove(self, direction):
         moving = copy.deepcopy(self.coords)
         if(direction == 'up'):
@@ -17,11 +19,19 @@ class Actor():
         elif(direction == 'left'):
             moving[0] -= 1
         
-        if((moving[0] > self.limits[0]) or (moving[1] > self.limits[1]) or (-1 in moving) or (moving in self.barriers)):
+        # validations
+        onbarrier = moving in self.barriers
+        pastx = moving[0] > self.limits[0]
+        pasty = moving[1] > self.limits[1]
+        negative = -1 in moving
+        blocked = moving in self.barriers
+        
+        if(onbarrier or pastx or pasty or negative or blocked):
             return False
         else:
             return True
 
+    # attempts to move in a specified direction
     def move(self, direction):
         if(direction == 'up'):
             if self.canmove('up'):

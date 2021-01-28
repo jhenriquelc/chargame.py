@@ -21,8 +21,8 @@ class Actor():
         
         # validations
         onbarrier = moving in self.barriers
-        pastx = moving[0] > self.limits[0]
-        pasty = moving[1] > self.limits[1]
+        pastx = moving[0] >= self.limits[0]
+        pasty = moving[1] >= self.limits[1]
         negative = -1 in moving
         blocked = moving in self.barriers
         

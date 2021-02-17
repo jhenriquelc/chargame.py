@@ -1,4 +1,3 @@
-# ! WORK IN PROGRESS !
 from board import Board
 from clear_screen import clear
 from getch import getch
@@ -25,8 +24,8 @@ def pre_draw(limits, actor_coords, barriers):
     line = 0
     column = 0
     buffer = ''
-    while line < limits[0]: # draws all lines
-        while(column < limits[1]): # draws all columns
+    while line < limits[1]:
+        while(column < limits[0]):
             if [column, line] in barriers:
                 buffer += '☒'
             elif [column, line] == actor_coords:
@@ -121,7 +120,6 @@ def getbarriers(limits, start): # TODO: implement functionality in getbarriers()
 # TODO: walk through the process of creating a board with the user
 if __name__ == '__main__' :    
     print('Input "h" for help')
-    print('!THIS PART OF THE CODE IS IMCOMPLETE!')
     limits = getlimits()
     print('Input "p" to see how the board currently looks like')
     start = getstart(limits)

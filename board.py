@@ -5,7 +5,9 @@ class Board:
         self.actor = Actor(start, limits, barriers)
         self.barriers = barriers
     
-    def draw(self):
+    @property
+    def out_list(self):
+        cache = []
         line = 0
         column = 0
         buffer = ''
@@ -19,6 +21,11 @@ class Board:
                     buffer += '·'
                 column += 1
             column = 0
-            print(buffer)
+            cache.append(buffer)
             buffer = ''
             line += 1
+        return cache
+    
+    def draw(self):
+        for line in self.out_list:
+            print(line)

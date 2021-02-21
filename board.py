@@ -118,10 +118,14 @@ class Board:
         elif(direction == 'left' and self.canmove('left')):
             self.player[0] -= 1
         elif(direction == 'ur' and self.canmove('ur')):
-            self.move('ur')
+            self.player[1] -= 1
+            self.player[0] += 1
         elif(direction == 'ul' and self.canmove('ul')):
-            self.move('ul')
+            self.player[1] -= 1
+            self.player[0] -= 1
         elif(direction == 'dr' and self.canmove('dr')):
-            self.move('dr')
+            self.player[1] += 1
+            self.player[0] += 1
         elif(direction == 'dl' and self.canmove('dl')):
-            self.move('dl')
+            self.player[1] += 1
+            self.player[0] -= 1

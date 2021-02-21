@@ -83,6 +83,18 @@ class Board:
             moving[1] += 1
         elif(direction == 'left'):
             moving[0] -= 1
+        elif(direction == 'ur'):
+            moving[1] -= 1
+            moving[0] += 1
+        elif(direction == 'ul'):
+            moving[1] -= 1
+            moving[0] -= 1
+        elif(direction == 'dr'):
+            moving[1] += 1
+            moving[0] += 1
+        elif(direction == 'dl'):
+            moving[1] += 1
+            moving[0] -= 1
 
         # validations
         onbarrier = moving in self.barriers
@@ -109,3 +121,11 @@ class Board:
         elif(direction == 'left'):
             if self.canmove('left'):
                 self.player[0] -= 1
+        elif(direction == 'ur' and self.canmove('ur')):
+            self.move('ur')
+        elif(direction == 'ul' and self.canmove('ul')):
+            self.move('ul')
+        elif(direction == 'dr' and self.canmove('dr')):
+            self.move('dr')
+        elif(direction == 'dl' and self.canmove('dl')):
+            self.move('dl')

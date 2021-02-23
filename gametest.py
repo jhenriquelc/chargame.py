@@ -26,6 +26,14 @@ def gameloop(board):
             board.move('left')
         elif char.lower() == 'd':
             board.move('right')
+        elif char.lower() == 'q':
+            board.move('ul')
+        elif char.lower() == 'e':
+            board.move('ur')
+        elif char.lower() == 'z':
+            board.move('dl')
+        elif char.lower() == 'c':
+            board.move('dr')
         continue
 
 

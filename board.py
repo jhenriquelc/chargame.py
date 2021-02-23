@@ -95,6 +95,8 @@ class Board:
         elif(direction == 'dl'):
             moving[1] += 1
             moving[0] -= 1
+        else:
+            return False
 
         # validations
         onbarrier = moving in self.barriers

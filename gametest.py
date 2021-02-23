@@ -14,19 +14,21 @@ def main():
 
 def gameloop(board):
     print('Use WASD to move')
+    directions = {
+        'w': 'up',
+        'a': 'left',
+        's': 'down',
+        'd': 'right',
+        'q': 'ul',
+        'z': 'dl',
+        'e': 'ur',
+        'c': 'dr'
+    }
     while True:
         clear()
         board.draw()
         char = getch()
-        if char.lower() == 's':
-            board.move('down')
-        elif char.lower() == 'w':
-            board.move('up')
-        elif char.lower() == 'a':
-            board.move('left')
-        elif char.lower() == 'd':
-            board.move('right')
-        continue
+        board.move(directions[char])
 
 
 def getlimits():

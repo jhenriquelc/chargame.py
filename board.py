@@ -1,133 +1,91 @@
 import copy
+from coords import Coord
 
 
 class Board:
     def __init__(self, limits, player=[], barriers=[]):
-        self.limits = limits
-        self.barriers = barriers
-        self.player = player
+        self.limits = Coord(limits)
+        self.barriers = [Coord(item) for item in barriers]
+        self.player = Coord(player)
+        self.barrier_list = [item.out_list for item in self.barriers]
 
         # config
         self.player_char = 'i'
         self.empty_char = ' '
         self.barrier_char = 'ø'
-
         self.corner_char = '#'
         self.wall_char = '|'
         self.lid_char = '-'
 
-    @property
-    def ylimit(self):
-        return self.limits[1]
+    def whats_in(self, coord):
+        _coord = coord.out_list
+        if coord.x >= self.limits.x or coord.y >= self.limits.y:
+            return False
+        if _coord in self.barrier_list:
+            return 'barrier'
+        elif _coord == self.player.out_list:
+            return 'player'
+        else:
+            return 'empty'
 
-    @property
-    def xlimit(self):
-        return self.limits[0]
-
-    @property
     def out_list(self):
-        cache = []
+        screen_list = []
         line = 0
         column = 0
-        buffer = ''
-        while line < self.ylimit:
-            while(column < self.xlimit):
-                if [column, line] in self.barriers:
-                    buffer += self.barrier_char
+        scan_line = ''
+        while line < self.limits.y:
+            while(column < self.limits.x):
+                if [column, line] in self.barrier_list:
+                    scan_line += self.barrier_char
                 elif [column, line] == self.player:
-                    buffer += self.player_char
+                    scan_line += self.player_char
                 else:
-                    buffer += self.empty_char
+                    scan_line += self.empty_char
                 column += 1
             column = 0
-            cache.append(buffer)
-            buffer = ''
+            screen_list.append(scan_line)
+            scan_line = ''
             line += 1
-        return cache
+        return screen_list
 
     @property
     def out_pretty_list(self):
-        cache = []
+        screen_list = []
         out_list = self.out_list
-        for y in range(self.ylimit + 2):
-            buffer = ''
-            for x in range(self.xlimit + 2):
+        for y in range(self.limits.y + 2):
+            scan_line = ''
+            for x in range(self.limits.x + 2):
                 # if on top or bottom
-                if y == 0 or y == self.ylimit + 1:
+                if y == 0 or y == self.limits.y + 1:
                     # and on the sides, aka on a corner
-                    if x == 0 or x == self.xlimit + 1:
-                        buffer += self.corner_char
+                    if x == 0 or x == self.limits.x + 1:
+                        scan_line += self.corner_char
                     # on top or bottom, but not on a side
                     else:
-                        buffer += self.lid_char
+                        scan_line += self.lid_char
                 # if not on top on bottom, but on a side
-                elif x == 0 or x == self.xlimit + 1:
-                    buffer += self.wall_char
+                elif x == 0 or x == self.limits.x + 1:
+                    scan_line += self.wall_char
                 # if on middle
                 else:
-                    buffer += out_list[y - 1][x - 1]
-            cache.append(buffer)
-        return cache
+                    scan_line += out_list[y - 1][x - 1]
+            screen_list.append(scan_line)
+        return screen_list
 
     def draw(self):
         for line in self.out_pretty_list:
             print(line)
+    
+    def can_move(self, obj, direction):
+        return True #TODO: implement move checks
 
-    def canmove(self, direction):
-        moving = copy.deepcopy(self.player)
-        if(direction == 'up'):
-            moving[1] -= 1
-        elif(direction == 'right'):
-            moving[0] += 1
-        elif(direction == 'down'):
-            moving[1] += 1
-        elif(direction == 'left'):
-            moving[0] -= 1
-        elif(direction == 'ur'):
-            moving[1] -= 1
-            moving[0] += 1
-        elif(direction == 'ul'):
-            moving[1] -= 1
-            moving[0] -= 1
-        elif(direction == 'dr'):
-            moving[1] += 1
-            moving[0] += 1
-        elif(direction == 'dl'):
-            moving[1] += 1
-            moving[0] -= 1
-        else:
-            return False
-
-        # validations
-        onbarrier = moving in self.barriers
-        pastx = moving[0] >= self.xlimit
-        pasty = moving[1] >= self.ylimit
-        negative = -1 in moving
-        blocked = moving in self.barriers
-
-        if(onbarrier or pastx or pasty or negative or blocked):
-            return False
-        else:
-            return True
-
-    def move(self, direction):
-        if(direction == 'up' and self.canmove('up')):
-            self.player[1] -= 1
-        elif(direction == 'right' and self.canmove('right')):
-            self.player[0] += 1
-        elif(direction == 'down' and self.canmove('down')):
-            self.player[1] += 1
-        elif(direction == 'left' and self.canmove('left')):
-            self.player[0] -= 1
-        elif(direction == 'ur' and self.canmove('ur')):
-            self.player[1] -= 1
-            self.player[0] += 1
-        elif(direction == 'ul' and self.canmove('ul')):
-            self.player[1] -= 1
-            self.player[0] -= 1
-        elif(direction == 'dr' and self.canmove('dr')):
-            self.player[1] += 1
-            self.player[0] += 1
-        elif(direction == 'dl' and self.canmove('dl')):
-            self.player[1] += 1
-            self.player[0] -= 1
+    def move(self, obj, direction):
+        _obj = copy.deepcopy(obj)
+        _obj.move(direction)
+        if self.whats_in(obj) == 'player' and self.whats_in(_obj) == 'movable':
+            pass #TODO: implement movable objects
+        elif self.whats_in(obj) == 'movable':
+            pass #NOTE: here too!
+        elif self.whats_in(_obj) == 'empty':
+            obj.move(direction)
+        

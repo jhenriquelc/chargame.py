@@ -27,7 +27,7 @@ class Coord:
             self.x += 1
         elif(direction == 'dl'):
             self.y += 1
-            self.x -= 
+            self.x -= 1
 
     @property
     def out_list(self):

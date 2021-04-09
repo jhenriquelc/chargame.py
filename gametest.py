@@ -2,6 +2,7 @@ from board import Board
 from clear_screen import clear
 from getch import getch
 
+# PROBABLY OUT-OF-DATE
 
 def main():
     print('Input "h" for help')

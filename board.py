@@ -28,6 +28,7 @@ class Board:
         else:
             return 'empty'
 
+    @property
     def out_list(self):
         screen_list = []
         line = 0
@@ -37,7 +38,7 @@ class Board:
             while(column < self.limits.x):
                 if [column, line] in self.barrier_list:
                     scan_line += self.barrier_char
-                elif [column, line] == self.player:
+                elif [column, line] == self.player.out_list:
                     scan_line += self.player_char
                 else:
                     scan_line += self.empty_char

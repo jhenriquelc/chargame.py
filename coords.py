@@ -7,7 +7,7 @@ class Coord:
             self.x = x
             self.y = y
 
-    def move(self, direction):
+    def mv(self, direction):
         if(direction == 'up'):
             self.y -= 1
         elif(direction == 'right'):

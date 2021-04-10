@@ -124,7 +124,7 @@ if __name__ == '__main__':
         barriers=[[0, 0], [0, 1], [1, 0]],
         movables=[[7, 1]])
     print(repr(board))
-    board.mv('right')
+    board.mv_player('right')
     print(repr(board))
     board.mv_player('down')
     board.mv_player('right')

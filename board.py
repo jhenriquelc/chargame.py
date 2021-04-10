@@ -3,28 +3,29 @@ from coords import Coord
 
 
 class Board:
-    def __init__(self, limits, player=[], barriers=[]):
+    def __init__(self, limits, player=[], barriers=[], movables=[]):
         self.limits = Coord(limits)
         self.barriers = [Coord(item) for item in barriers]
+        self.movables = [Coord(item) for item in movables]
         self.player = Coord(player)
-        self.barrier_list = [item.out_list for item in self.barriers]
-
         # config
         self.player_char = 'i'
         self.empty_char = ' '
         self.barrier_char = 'ø'
+        self.movable_char = '*'
         self.corner_char = '#'
         self.wall_char = '|'
         self.lid_char = '-'
 
-    def whats_in(self, coord):
-        _coord = coord.out_list
+    def what_is(self, coord):
         if coord.x >= self.limits.x or coord.y >= self.limits.y:
-            return False
-        if _coord in self.barrier_list:
+            return 'out of bounds'
+        if coord in self.barriers:
             return 'barrier'
-        elif _coord == self.player.out_list:
+        elif coord == self.player:
             return 'player'
+        elif coord in self.movables:
+            return 'movable'
         else:
             return 'empty'
 
@@ -36,10 +37,12 @@ class Board:
         scan_line = ''
         while line < self.limits.y:
             while(column < self.limits.x):
-                if [column, line] in self.barrier_list:
+                if Coord([column, line]) in self.barriers:
                     scan_line += self.barrier_char
-                elif [column, line] == self.player.out_list:
+                elif Coord([column, line]) == self.player:
                     scan_line += self.player_char
+                elif Coord([column, line]) in self.movables:
+                    scan_line += self.movable_char
                 else:
                     scan_line += self.empty_char
                 column += 1
@@ -73,20 +76,58 @@ class Board:
             screen_list.append(scan_line)
         return screen_list
 
-    def draw(self):
-        for line in self.out_pretty_list:
-            print(line)
-    
-    def can_move(self, obj, direction):
-        return True #TODO: implement move checks
+    def __str__(self):
+        output = ''
+        for line in self.out_list:
+            output += line + '\n'
+        return output
 
-    def move(self, obj, direction):
+    def __repr__(self):
+        output = ''
+        for line in self.out_pretty_list:
+            output += line + '\n'
+        return output
+
+    def can_move(self, obj, direction):
         _obj = copy.deepcopy(obj)
-        _obj.move(direction)
-        if self.whats_in(obj) == 'player' and self.whats_in(_obj) == 'movable':
-            pass #TODO: implement movable objects
-        elif self.whats_in(obj) == 'movable':
-            pass #NOTE: here too!
-        elif self.whats_in(_obj) == 'empty':
-            obj.move(direction)
-        
+        _obj.mv(direction)
+        in_barrier = _obj in self.barriers
+        in_movable = _obj in self.barriers
+        out_of_range = _obj.x >= self.limits.x or _obj.y >= self.limits.y
+        if in_barrier or in_movable or out_of_range:
+            return False
+        else:
+            return True
+
+    def mv(self, obj, direction):
+        _obj = copy.deepcopy(obj)
+        _obj.mv(direction)
+        if self.what_is(obj) == 'movable' and self.can_move(obj, direction):
+            obj.mv(direction)
+        elif self.what_is(obj) == 'player' and self.what_is(_obj) == 'movable':
+            if self.can_move(_obj, direction):
+                index = self.movables.index(_obj)
+                _obj.mv(direction)
+                self.movables[index] = _obj
+                obj.mv(direction)
+        elif self.what_is(obj) == 'player' and self.can_move(obj, direction):
+            obj.mv(direction)
+
+    def mv_player(self, direction):
+        self.mv(self.player, direction)
+
+
+if __name__ == '__main__':
+    board = Board(
+        limits=[9, 3],
+        player=[6, 1],
+        barriers=[[0, 0], [0, 1], [1, 0]],
+        movables=[[7, 1]])
+    print(repr(board))
+    board.mv('right')
+    print(repr(board))
+    board.mv_player('down')
+    board.mv_player('right')
+    print(repr(board))
+    board.mv_player('up')
+    print(repr(board))

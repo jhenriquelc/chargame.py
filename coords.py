@@ -32,3 +32,15 @@ class Coord:
     @property
     def out_list(self):
         return [self.x, self.y]
+
+    def __repr__(self):
+        return f'x:{self.x} y:{self.y}'
+    
+    def __str__(self):
+        return f'{self.x} {self.y}'
+
+    def __eq__(self, coord):
+        if self.x == coord.x and self.y == coord.y:
+            return True
+        else:
+            return False

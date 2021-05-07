@@ -3,7 +3,7 @@ from coords import Coord
 
 
 class Board:
-    def __init__(self, limits, player=[], barriers=[], movables=[]):
+    def __init__(self, limits, player=[1, 1], barriers=[], movables=[]):
         self.limits = Coord(limits)
         self.barriers = [Coord(item) for item in barriers]
         self.movables = [Coord(item) for item in movables]
@@ -78,13 +78,13 @@ class Board:
 
     def __str__(self):
         output = ''
-        for line in self.out_list:
+        for line in self.out_pretty_list:
             output += line + '\n'
         return output
 
     def __repr__(self):
         output = ''
-        for line in self.out_pretty_list:
+        for line in self.out_list:
             output += line + '\n'
         return output
 
@@ -92,26 +92,29 @@ class Board:
         _obj = copy.deepcopy(obj)
         _obj.mv(direction)
         in_barrier = _obj in self.barriers
-        in_movable = _obj in self.barriers
-        out_of_range = _obj.x >= self.limits.x or _obj.y >= self.limits.y
+        in_movable = _obj in self.movables
+        out_of_range = _obj >= self.limits
         if in_barrier or in_movable or out_of_range:
             return False
         else:
             return True
 
     def mv(self, obj, direction):
+        me = self.what_is(obj)
         _obj = copy.deepcopy(obj)
         _obj.mv(direction)
-        if self.what_is(obj) == 'movable' and self.can_move(obj, direction):
-            obj.mv(direction)
-        elif self.what_is(obj) == 'player' and self.what_is(_obj) == 'movable':
-            if self.can_move(_obj, direction):
-                index = self.movables.index(_obj)
-                _obj.mv(direction)
-                self.movables[index] = _obj
-                obj.mv(direction)
-        elif self.what_is(obj) == 'player' and self.can_move(obj, direction):
-            obj.mv(direction)
+        front = self.what_is(_obj)
+        canmove = self.can_move(obj, direction)
+        if me == 'player':
+            # if trying to push
+            if front == 'movable' and self.can_move(_obj, direction):
+                self.movables[self.movables.index(_obj)].mv(direction)
+                self.player.mv(direction)
+            # if moving into nothing
+            elif canmove:
+                self.player.mv(direction)
+            
+        
 
     def mv_player(self, direction):
         self.mv(self.player, direction)
@@ -123,11 +126,11 @@ if __name__ == '__main__':
         player=[6, 1],
         barriers=[[0, 0], [0, 1], [1, 0]],
         movables=[[7, 1]])
-    print(repr(board))
+    print(board)
     board.mv_player('right')
-    print(repr(board))
+    print(board)
     board.mv_player('down')
     board.mv_player('right')
-    print(repr(board))
+    print(board)
     board.mv_player('up')
-    print(repr(board))
+    print(board)

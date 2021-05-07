@@ -6,28 +6,16 @@ class Coord:
         else:
             self.x = x
             self.y = y
+        
+        self.directions = {
+            'up': 'self.y -= 1',
+            'right': 'self.x += 1',
+            'down': 'self.y += 1',
+            'left': 'self.x -= 1'
+        }
 
     def mv(self, direction):
-        if(direction == 'up'):
-            self.y -= 1
-        elif(direction == 'right'):
-            self.x += 1
-        elif(direction == 'down'):
-            self.y += 1
-        elif(direction == 'left'):
-            self.x -= 1
-        elif(direction == 'ur'):
-            self.y -= 1
-            self.x += 1
-        elif(direction == 'ul'):
-            self.y -= 1
-            self.x -= 1
-        elif(direction == 'dr'):
-            self.y += 1
-            self.x += 1
-        elif(direction == 'dl'):
-            self.y += 1
-            self.x -= 1
+        exec(self.directions[direction])
 
     @property
     def out_list(self):
@@ -44,3 +32,15 @@ class Coord:
             return True
         else:
             return False
+    
+    def __gt__(self, coord):
+        return True if (self.x > coord.x or self.y > coord.y) else False
+
+    def __ge__(self, coord):
+        return True if (self.x >= coord.x or self.y >= coord.y) else False
+
+    def __lt__(self, coord):
+        return True if (self.x < coord.x or self.y < coord.y) else False
+    
+    def __le__(self, coord):
+        return True if (self.x <= coord.x or self.y <= coord.y) else False

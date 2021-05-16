@@ -8,14 +8,22 @@ class Board:
         self.barriers = [Coord(item) for item in barriers]
         self.movables = [Coord(item) for item in movables]
         self.player = Coord(player)
+        self.border = copy.deepcopy(self.limits)
+        # do this once diagonal movement is back: self.border.mv('dr')
+        self.border.mv('down')
+        self.border.mv('right')
+
         # config
         self.player_char = 'i'
         self.empty_char = ' '
-        self.barrier_char = 'ø'
+        self.barrier_char = '▯'
         self.movable_char = '*'
-        self.corner_char = '#'
-        self.wall_char = '|'
-        self.lid_char = '-'
+        self.wall_char = '│'
+        self.lid_char = '─'
+        self.top_right_char = '┐'
+        self.top_left_char = '┌'
+        self.bottom_right_char = '┘'
+        self.bottom_left_char = '└'
 
     def what_is(self, coord):
         if coord.x >= self.limits.x or coord.y >= self.limits.y:
@@ -56,21 +64,29 @@ class Board:
     def out_pretty_list(self):
         screen_list = []
         out_list = self.out_list
-        for y in range(self.limits.y + 2):
+
+        for y in range(self.border.y + 1):
             scan_line = ''
-            for x in range(self.limits.x + 2):
-                # if on top or bottom
-                if y == 0 or y == self.limits.y + 1:
-                    # and on the sides, aka on a corner
-                    if x == 0 or x == self.limits.x + 1:
-                        scan_line += self.corner_char
-                    # on top or bottom, but not on a side
-                    else:
-                        scan_line += self.lid_char
-                # if not on top on bottom, but on a side
-                elif x == 0 or x == self.limits.x + 1:
+            for x in range(self.border.x + 1):
+                # if on top left
+                if x == 0 and y == 0:
+                    scan_line += self.top_left_char
+                # if on bottom left
+                elif x == 0 and y == self.border.y:
+                    scan_line += self.bottom_left_char
+                # if on top right
+                elif x == self.border.x and y == 0:
+                    scan_line += self.top_right_char
+                # if on bottom right
+                elif x == self.border.x and y == self.border.y:
+                    scan_line += self.bottom_right_char
+                # if on a side
+                elif x == 0 or x == self.border.x:
                     scan_line += self.wall_char
-                # if on middle
+                # if on top or bottom
+                elif y == 0 or y == self.border.y:
+                    scan_line += self.lid_char
+                # if in middle
                 else:
                     scan_line += out_list[y - 1][x - 1]
             screen_list.append(scan_line)

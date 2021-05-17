@@ -142,12 +142,15 @@ if __name__ == '__main__':
         limits=[9, 3],
         player=[6, 1],
         barriers=[[0, 0], [0, 1], [1, 0]],
-        movables=[[7, 1]])
+        movables=[[7, 1], [8, 1]])
     print(board)
     board.mv_player('right')
     print(board)
     board.mv_player('down')
+    print(board)
     board.mv_player('right')
     print(board)
     board.mv_player('up')
+    print(board)
+    board.mv_player('right')
     print(board)

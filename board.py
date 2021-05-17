@@ -12,6 +12,7 @@ class Board:
         # do this once diagonal movement is back: self.border.mv('dr')
         self.border.mv('down')
         self.border.mv('right')
+        self._zerozero = Coord([0, 0])
 
         # config
         self.player_char = 'i'
@@ -109,7 +110,7 @@ class Board:
         _obj.mv(direction)
         in_barrier = _obj in self.barriers
         in_movable = _obj in self.movables
-        out_of_range = _obj >= self.limits
+        out_of_range = _obj >= self.limits or _obj < self._zerozero
         if in_barrier or in_movable or out_of_range:
             return False
         else:

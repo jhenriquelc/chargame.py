@@ -1,11 +1,21 @@
 class Coord:
-    def __init__(self, x=0, y=0):
+    def __init__(self, x, y=0):
         if type(x) == list:
-            self.x = x[0]
-            self.y = x[1]
-        else:
+            if len(x) == 0:
+                self.x = -2
+                self.y = -2
+            else:
+                self.x = x[0]
+                self.y = x[1]
+        elif type(x) == int:
             self.x = x
             self.y = y
+        elif type(x) == Coord:
+            self.x = x.x
+            self.y = x.y
+        elif x is None:
+            self.x = -2
+            self.y = -2         
         
         self.directions = {
             'up': 'self.y -= 1',

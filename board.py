@@ -3,7 +3,7 @@ from coords import Coord
 
 
 class Board:
-    def __init__(self, limits, player=[1, 1], barriers=[], movables=[]):
+    def __init__(self, limits, player=[], barriers=[], movables=[]):
         self.limits = Coord(limits)
         self.barriers = [Coord(item) for item in barriers]
         self.movables = [Coord(item) for item in movables]

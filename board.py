@@ -1,33 +1,45 @@
 import copy
+from readchar import readkey as getch
 from coords import Coord
+from clear_screen import clear
 
 
 class Board:
-    def __init__(self, limits, player=[], barriers=[], movables=[]):
-        self.limits = Coord(limits)
+    def __init__(self, limits, player=[], barriers=[], movables=[], goal=[]):
+        self._limits = Coord(limits)
         self.barriers = [Coord(item) for item in barriers]
         self.movables = [Coord(item) for item in movables]
         self.player = Coord(player)
-        self.border = copy.deepcopy(self.limits)
-        # do this once diagonal movement is back: self.border.mv('dr')
-        self.border.mv('down')
-        self.border.mv('right')
+        self.goal = Coord(goal)
+        self._border = copy.deepcopy(self._limits)
+        # do this once diagonal movement is back: self._border.mv('dr')
+        self._border.mv('down')
+        self._border.mv('right')
         self._zerozero = Coord([0, 0])
 
-        # config
-        self.player_char = 'i'
-        self.empty_char = ' '
-        self.barrier_char = '▯'
-        self.movable_char = '*'
-        self.wall_char = '│'
-        self.lid_char = '─'
-        self.top_right_char = '┐'
-        self.top_left_char = '┌'
-        self.bottom_right_char = '┘'
-        self.bottom_left_char = '└'
+        self.chars = {
+            'player': 'i',
+            'empty': ' ',
+            'out of bounds': '!',
+            'barrier': '▯',
+            'movable': '*',
+            'goal': 'o',
+            'wall': '│',
+            'lid': '─',
+            'top_right': '┐',
+            'top_left': '┌',
+            'bottom_right': '┘',
+            'bottom_left': '└'
+        }
+        self.move_keys = {
+            'w': 'up',
+            'a': 'left',
+            's': 'down',
+            'd': 'right',
+        }
 
     def what_is(self, coord):
-        if coord.x >= self.limits.x or coord.y >= self.limits.y:
+        if coord.x >= self._limits.x or coord.y >= self._limits.y:
             return 'out of bounds'
         if coord in self.barriers:
             return 'barrier'
@@ -35,6 +47,8 @@ class Board:
             return 'player'
         elif coord in self.movables:
             return 'movable'
+        elif coord == self.goal:
+            return 'goal'
         else:
             return 'empty'
 
@@ -44,16 +58,9 @@ class Board:
         line = 0
         column = 0
         scan_line = ''
-        while line < self.limits.y:
-            while(column < self.limits.x):
-                if Coord([column, line]) in self.barriers:
-                    scan_line += self.barrier_char
-                elif Coord([column, line]) == self.player:
-                    scan_line += self.player_char
-                elif Coord([column, line]) in self.movables:
-                    scan_line += self.movable_char
-                else:
-                    scan_line += self.empty_char
+        while line < self._limits.y:
+            while(column < self._limits.x):
+                scan_line += self.chars[self.what_is(Coord(column, line))]
                 column += 1
             column = 0
             screen_list.append(scan_line)
@@ -66,27 +73,27 @@ class Board:
         screen_list = []
         out_list = self.out_list
 
-        for y in range(self.border.y + 1):
+        for y in range(self._border.y + 1):
             scan_line = ''
-            for x in range(self.border.x + 1):
+            for x in range(self._border.x + 1):
                 # if on top left
                 if x == 0 and y == 0:
-                    scan_line += self.top_left_char
+                    scan_line += self.chars['top_left']
                 # if on bottom left
-                elif x == 0 and y == self.border.y:
-                    scan_line += self.bottom_left_char
+                elif x == 0 and y == self._border.y:
+                    scan_line += self.chars['bottom_left']
                 # if on top right
-                elif x == self.border.x and y == 0:
-                    scan_line += self.top_right_char
+                elif x == self._border.x and y == 0:
+                    scan_line += self.chars['top_right']
                 # if on bottom right
-                elif x == self.border.x and y == self.border.y:
-                    scan_line += self.bottom_right_char
+                elif x == self._border.x and y == self._border.y:
+                    scan_line += self.chars['bottom_right']
                 # if on a side
-                elif x == 0 or x == self.border.x:
-                    scan_line += self.wall_char
+                elif x == 0 or x == self._border.x:
+                    scan_line += self.chars['wall']
                 # if on top or bottom
-                elif y == 0 or y == self.border.y:
-                    scan_line += self.lid_char
+                elif y == 0 or y == self._border.y:
+                    scan_line += self.chars['lid']
                 # if in middle
                 else:
                     scan_line += out_list[y - 1][x - 1]
@@ -110,7 +117,7 @@ class Board:
         _obj.mv(direction)
         in_barrier = _obj in self.barriers
         in_movable = _obj in self.movables
-        out_of_range = _obj >= self.limits or _obj < self._zerozero
+        out_of_range = _obj >= self._limits or _obj < self._zerozero
         if in_barrier or in_movable or out_of_range:
             return False
         else:
@@ -135,6 +142,48 @@ class Board:
 
     def mv_player(self, direction):
         self.mv(self.player, direction)
+    
+    def play(self):
+        clear()
+        stopped = False
+        won = False
+        lost = False
+        invalid_key = False
+        print('Use WASD to move, K to exit')
+        print(self)
+        while 1:
+            print('Use WASD to move, K to exit')
+            print(self)
+            if invalid_key:
+                print('Press a valid key')
+                invalid_key = False
+            else:
+                print('')
+            key = getch()
+            if key == '\x03' or key == 'k':
+                stopped = True
+                break
+            try:
+                self.mv_player(self.move_keys[key])
+            except:
+                invalid_key = True
+            clear()
+
+            if self.goal in self.movables:
+                lost = True
+                break
+            if self.player == self.goal:
+                won = True
+                break
+        if lost:
+            print('Try not doing this again')
+            return False
+        elif won:
+            print('Congratulations')
+            return True
+        elif stopped:
+            print('exiting...')
+            return None
 
 
 if __name__ == '__main__':
@@ -142,15 +191,6 @@ if __name__ == '__main__':
         limits=[9, 3],
         player=[6, 1],
         barriers=[[0, 0], [0, 1], [1, 0]],
-        movables=[[7, 1], [8, 1]])
-    print(board)
-    board.mv_player('right')
-    print(board)
-    board.mv_player('down')
-    print(board)
-    board.mv_player('right')
-    print(board)
-    board.mv_player('up')
-    print(board)
-    board.mv_player('right')
-    print(board)
+        movables=[[7, 1], [8, 1]],
+        goal = [0, 2])
+    board.play()

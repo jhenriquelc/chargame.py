@@ -12,9 +12,7 @@ class Board:
         self.player = Coord(player)
         self.goal = Coord(goal)
         self._border = copy.deepcopy(self._limits)
-        # do this once diagonal movement is back: self._border.mv('dr')
-        self._border.mv('down')
-        self._border.mv('right')
+        self._border.mv('dr')
         self._zerozero = Coord([0, 0])
 
         self.chars = {
@@ -36,6 +34,10 @@ class Board:
             'a': 'left',
             's': 'down',
             'd': 'right',
+            'q': 'ul',
+            'e': 'ur',
+            'z': 'dl',
+            'c': 'dr',
         }
 
     def what_is(self, coord):

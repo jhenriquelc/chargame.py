@@ -15,13 +15,17 @@ class Coord:
             self.y = x.y
         elif x is None:
             self.x = -2
-            self.y = -2         
-        
+            self.y = -2
+
         self.directions = {
-            'up': 'self.y -= 1',
-            'right': 'self.x += 1',
-            'down': 'self.y += 1',
-            'left': 'self.x -= 1'
+            'up': 'self += [0, -1]',
+            'right': 'self += [1, 0]',
+            'down': 'self += [0, 1]',
+            'left': 'self += [-1, 0]',
+            'ur': 'self += [1, -1]',
+            'ul': 'self += [-1, -1]',
+            'dr': 'self += [1, 1]',
+            'dl': 'self += [-1, 1]'
         }
 
     def mv(self, direction):
@@ -37,7 +41,7 @@ class Coord:
         x = adder.x + self.x
         y = adder.y + self.y
         return Coord(x, y)
-    
+
     def __iadd__(self, adder):
         if type(adder) != Coord:
             adder = Coord(adder)
@@ -46,7 +50,7 @@ class Coord:
 
     def __repr__(self):
         return f'x:{self.x} y:{self.y}'
-    
+
     def __str__(self):
         return f'{self.x} {self.y}'
 
@@ -55,7 +59,7 @@ class Coord:
             return True
         else:
             return False
-    
+
     def __gt__(self, coord):
         return True if (self.x > coord.x or self.y > coord.y) else False
 
@@ -64,6 +68,6 @@ class Coord:
 
     def __lt__(self, coord):
         return True if (self.x < coord.x or self.y < coord.y) else False
-    
+
     def __le__(self, coord):
         return True if (self.x <= coord.x or self.y <= coord.y) else False

@@ -16,6 +16,8 @@ class Coord:
         elif x is None:
             self.x = -2
             self.y = -2
+        else:
+            raise TypeError(f'Unsupported type "{type(x)}"')
 
         self.directions = {
             'up': 'self += [0, -1]',

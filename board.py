@@ -137,12 +137,10 @@ class Board:
             # if moving into nothing
             elif canmove:
                 self.player.mv(direction)
-            
-        
 
     def mv_player(self, direction):
         self.mv(self.player, direction)
-    
+
     def play(self):
         clear()
         stopped = False
@@ -192,5 +190,5 @@ if __name__ == '__main__':
         player=[6, 1],
         barriers=[[0, 0], [0, 1], [1, 0]],
         movables=[[7, 1], [8, 1]],
-        goal = [0, 2])
+        goal=[0, 2])
     board.play()

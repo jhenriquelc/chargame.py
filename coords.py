@@ -31,6 +31,19 @@ class Coord:
     def out_list(self):
         return [self.x, self.y]
 
+    def __add__(self, adder):
+        if type(adder) != Coord:
+            adder = Coord(adder)
+        x = adder.x + self.x
+        y = adder.y + self.y
+        return Coord(x, y)
+    
+    def __iadd__(self, adder):
+        if type(adder) != Coord:
+            adder = Coord(adder)
+        self.x += adder.x
+        self.y += adder.y
+
     def __repr__(self):
         return f'x:{self.x} y:{self.y}'
     

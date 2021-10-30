@@ -71,7 +71,7 @@ class Board:
         return screen_list
 
     @property
-    def out_pretty_list(self):
+    def out_pretty_list(self) -> str:
         screen_list = []
         out_list = self.out_list
 
@@ -114,7 +114,7 @@ class Board:
             output += line + '\n'
         return output
 
-    def can_move(self, obj, direction):
+    def can_move(self, obj: Coord, direction: str) -> bool:
         _obj = copy.deepcopy(obj)
         _obj.mv(direction)
         in_barrier = _obj in self.barriers
@@ -151,6 +151,8 @@ class Board:
         invalid_key = False
         print('Use WASD to move, K to exit')
         print(self)
+        
+        # bad loop lol
         while 1:
             print('Use WASD to move, K to exit')
             print(self)
@@ -175,6 +177,7 @@ class Board:
             if self.player == self.goal:
                 won = True
                 break
+        #TODO: Remove double ifs
         if lost:
             print('Try not doing this again')
             return False

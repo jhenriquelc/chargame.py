@@ -1,6 +1,7 @@
 class Coord:
-    def __init__(self, x, y=0):
+    def __init__(self, x: int, y: int=0):
         if type(x) == list or type(x) == tuple:
+            # -2, -2 is basically the same as nowhere
             if len(x) == 0:
                 self.x = -2
                 self.y = -2

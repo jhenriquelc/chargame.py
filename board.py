@@ -151,8 +151,6 @@ class Board:
         won = False
         lost = False
         invalid_key = False
-        print('Use WASD to move, K to exit')
-        print(self)
 
         # bad loop lol
         while 1:

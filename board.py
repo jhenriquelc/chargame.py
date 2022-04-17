@@ -15,12 +15,12 @@ class Board:
         self.goal = Coord(goal)
         self._border = copy.deepcopy(self._limits)
         self._border.mv('dr')
-        self._zerozero = Coord([0, 0])
+        self._origin = Coord([0, 0])
 
         self.chars = {
             'player': 'i',
             'empty': ' ',
-            'out of bounds': '!',
+            'out_of_bounds': '!',
             'barrier': '▯',
             'movable': '*',
             'goal': 'o',
@@ -44,7 +44,7 @@ class Board:
 
     def what_is(self, coord):
         if coord.x >= self._limits.x or coord.y >= self._limits.y:
-            return 'out of bounds'
+            return 'out_of_bounds'
         if coord in self.barriers:
             return 'barrier'
         elif coord == self.player:
@@ -121,11 +121,10 @@ class Board:
         _obj.mv(direction)
         in_barrier = _obj in self.barriers
         in_movable = _obj in self.movables
-        out_of_range = _obj >= self._limits or _obj < self._zerozero
-        if in_barrier or in_movable or out_of_range:
-            return False
-        else:
-            return True
+        out_of_range = _obj >= self._limits or _obj < self._origin
+        invalid_move = in_barrier or in_movable or out_of_range
+
+        return False if invalid_move else True
 
     def mv(self, obj, direction):
         me = self.what_is(obj)
@@ -162,9 +161,11 @@ class Board:
             else:
                 print('')
             key = getch()
+            # '\x03' = control + c
             if key == '\x03' or key == 'k':
-                stopped = True
-                break
+                print('exiting...')
+                return None
+
             try:
                 self.mv_player(self.move_keys[key])
             except:
@@ -172,25 +173,24 @@ class Board:
             clear()
 
             if self.goal in self.movables:
-                lost = True
-                break
+                print('Try not doing this again')
+                return False
             if self.player == self.goal:
-                won = True
-                break
-        #TODO: Remove double ifs
-        if lost:
-            print('Try not doing this again')
-            return False
-        elif won:
-            print('Congratulations')
-            return True
-        elif stopped:
-            print('exiting...')
-            return None
+                print('Congratulations')
+                return True
 
 
 if __name__ == '__main__':
     board = Board(
+        # Creates a board that looks like this:
+        #
+        # Use WASD to move, K to exit
+        # ┌─────────┐
+        # │▯▯       │
+        # │▯     i**│
+        # │o        │
+        # └─────────┘
+        
         limits=[9, 3],
         player=[6, 1],
         barriers=[[0, 0], [0, 1], [1, 0]],

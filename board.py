@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import copy
 from readchar import readkey as getch
 from coords import Coord
@@ -151,7 +153,7 @@ class Board:
         invalid_key = False
         print('Use WASD to move, K to exit')
         print(self)
-        
+
         # bad loop lol
         while 1:
             print('Use WASD to move, K to exit')
